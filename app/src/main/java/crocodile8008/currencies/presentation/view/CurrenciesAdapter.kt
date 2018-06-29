@@ -57,17 +57,18 @@ class CurrenciesAdapter @Inject constructor(
         val item = values[position]
         holder.country.text = item.first
         holder.itemView.setOnClickListener {
-            holder.money.isFocusable = true
             holder.money.showKeyboard()
             clickSubject.onNext(item)
         }
         if (position == 0) {
             holder.money.addTextChangedListener(textWatcher)
-            holder.moneyTop.setOnClickListener(null)
+            holder.money.setOnFocusChangeListener(null)
         } else {
             holder.money.removeTextChangedListener(textWatcher)
-            holder.moneyTop.setOnClickListener {
-                holder.itemView.performClick()
+            holder.money.setOnFocusChangeListener { view, focused ->
+                if (focused) {
+                    holder.itemView.performClick()
+                }
             }
         }
     }
@@ -77,6 +78,5 @@ class CurrenciesAdapter @Inject constructor(
     inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val country: TextView = view.countryCodeTextView
         val money: EditText = view.money
-        val moneyTop: View = view.moneyInvisibleTopView
     }
 }
