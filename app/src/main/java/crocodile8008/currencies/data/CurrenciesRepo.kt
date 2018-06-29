@@ -29,6 +29,7 @@ class CurrenciesRepo @Inject constructor(private val service: CurrenciesService)
                 .interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .switchMap { loadCurrencies() }
+                .retry()
                 .subscribe(
                         {
                             last = it
