@@ -10,4 +10,6 @@ interface CurrenciesView {
     fun hideProgress()
 
     fun showData(data : List<Pair<String, Float>>)
+
+    fun scrollToTop()
 }

@@ -26,9 +26,9 @@ class CurrenciesPresenter @Inject constructor(
     fun onViewCreated(view : CurrenciesView) {
         this.view = view
         Lo.i("onViewCreated: $view")
-        repo.get()
+        repo.startUpdates()
+        repo.observeAllUpdates()
                 .subscribeOn(Schedulers.io())
-                .retry(3)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showProgress() }
                 .subscribeAndAddToDisposable(
@@ -48,6 +48,7 @@ class CurrenciesPresenter @Inject constructor(
         Lo.i("onClickItem: $item")
         viewModel.selectedCountry = item.first
         reorderAndDisplay(viewModel.lastDisplayed)
+        view.scrollToTop()
     }
 
     private fun reorderAndDisplay(list : List<Pair<String, Float>>) {
@@ -78,6 +79,7 @@ class CurrenciesPresenter @Inject constructor(
 
     fun onDestroyView() {
         Lo.i("onDestroyView: $view")
+        repo.stopUpdates()
         disposable.clear()
     }
 }

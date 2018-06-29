@@ -49,8 +49,11 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
 
     override fun showData(data : List<Pair<String, Float>>) {
         Lo.d("showData: $data")
-        recycler.scrollToPosition(0)
         adapter.update(data)
+    }
+
+    override fun scrollToTop() {
+        recycler.scrollToPosition(0)
     }
 
     override fun onDestroyView() {
