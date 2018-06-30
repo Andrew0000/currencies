@@ -45,8 +45,9 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 
     //Rx
     implementation "io.reactivex.rxjava2:rxjava:2.1.0"
