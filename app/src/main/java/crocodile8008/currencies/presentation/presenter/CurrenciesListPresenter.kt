@@ -74,7 +74,7 @@ class CurrenciesListPresenter @Inject constructor(
         holder.showKeyboard()
     }
 
-    fun isBasePosition(holder : CurrenciesAdapter.CurrencyViewHolder) : Boolean {
+    fun isValidSecondaryPosition(holder : CurrenciesAdapter.CurrencyViewHolder) : Boolean {
         val item = holder.getDisplayData()
         if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.isSelectedCountry(item.name)) {
             return false

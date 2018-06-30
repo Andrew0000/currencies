@@ -44,7 +44,7 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { presenter.onClickItem(it) }
         adapter.observeTextFocus()
-                .filter { presenter.isBasePosition(it) }
+                .filter { presenter.isValidSecondaryPosition(it) }
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { presenter.onTextFocus(it) }
