@@ -12,7 +12,7 @@ class CurrenciesViewModel : ViewModel() {
     }
 
     var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
-    var typedCount = 0f
+    var typedCount = 100f
     var displayCountWhenWasBeforeMainPosition = NOTHING
     var lastDisplayedList : List<String> = ArrayList()
     var lastDisplayedFull : CurrenciesBundle = CurrenciesBundle.EMPTY

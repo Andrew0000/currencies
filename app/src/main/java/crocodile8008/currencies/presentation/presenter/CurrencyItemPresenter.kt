@@ -29,12 +29,9 @@ class CurrencyItemPresenter<T> @Inject constructor(
         observeRepoIfNot()
         holders[holder] = country
         holder.setCountry(country)
-        if (viewModel.lastDisplayedFull.isEmpty()) {
-            return
-        }
         if (viewModel.isSelectedCountry(country)) {
             updateCurrencyOnBaseItem(holder)
-        } else {
+        } else if (!viewModel.lastDisplayedFull.isEmpty()) {
             updateCurrencyOnItem(holder, country)
         }
     }
