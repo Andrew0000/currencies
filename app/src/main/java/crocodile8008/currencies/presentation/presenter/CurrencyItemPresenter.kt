@@ -1,10 +1,11 @@
 package crocodile8008.currencies.presentation.presenter
 
 import android.support.annotation.MainThread
+import android.support.v7.widget.RecyclerView
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
-import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
+import crocodile8008.currencies.presentation.view.ItemView
 import crocodile8008.currencies.utils.Exchanger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -14,17 +15,17 @@ import javax.inject.Inject
 /**
  * Created by Andrei Riik in 2018.
  */
-class CurrencyItemPresenter @Inject constructor(
+class CurrencyItemPresenter<T> @Inject constructor(
     private val repo: CurrenciesRepo,
     private val exchanger: Exchanger,
-    private val viewModel : CurrenciesViewModel) {
+    private val viewModel : CurrenciesViewModel) where T : RecyclerView.ViewHolder, T : ItemView {
 
-    private val holders = WeakHashMap<CurrenciesAdapter.CurrencyViewHolder, String>()
+    private val holders = WeakHashMap<T, String>()
 
     private var disposable : Disposable? = null
 
     @MainThread
-    fun onBindViewHolder(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
+    fun onBindViewHolder(holder: T, country: String) {
         observeRepoIfNot()
         holders[holder] = country
         holder.setCountry(country)
@@ -38,7 +39,7 @@ class CurrencyItemPresenter @Inject constructor(
         }
     }
 
-    private fun updateCurrencyOnBaseItem(holder: CurrenciesAdapter.CurrencyViewHolder) {
+    private fun updateCurrencyOnBaseItem(holder: T) {
         if (viewModel.displayCountWhenWasBeforeMainPosition != CurrenciesViewModel.NOTHING) {
             holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
             viewModel.displayCountWhenWasBeforeMainPosition = CurrenciesViewModel.NOTHING
@@ -66,7 +67,7 @@ class CurrencyItemPresenter @Inject constructor(
                 )
     }
 
-    private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
+    private fun updateCurrencyOnItem(holder: T, country: String) {
         val exchanged = exchanger.exchange(
                 viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.typedCount, country)
         holder.setMoney(exchanged.toString())

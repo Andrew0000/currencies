@@ -24,7 +24,8 @@ import javax.inject.Inject
  */
 class CurrenciesAdapter @Inject constructor(
     private val inflater : LayoutInflater,
-    private val currencyPresenter: CurrencyItemPresenter) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
+    private val currencyPresenter: CurrencyItemPresenter<CurrenciesAdapter.CurrencyViewHolder>
+) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
     private val values = ArrayList<String>()
     private val clickSubject = PublishSubject.create<CurrencyViewHolder>()
@@ -51,8 +52,7 @@ class CurrenciesAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        val item = values[position]
-        currencyPresenter.onBindViewHolder(holder, item)
+        currencyPresenter.onBindViewHolder(holder, values[position])
     }
 
     fun onDestroyView() {
@@ -61,7 +61,7 @@ class CurrenciesAdapter @Inject constructor(
 
     override fun getItemCount() = values.size
 
-    inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view), ItemView {
 
         private val country: TextView = view.countryCodeTextView
         private val money: EditText = view.money
@@ -86,18 +86,18 @@ class CurrenciesAdapter @Inject constructor(
             })
         }
 
-        fun showKeyboard() {
-            money.post {
-                money.showKeyboard()
-            }
-        }
-
-        fun setCountry(text : String) {
+        override fun setCountry(text : String) {
             country.text = text
         }
 
-        fun setMoney(text : String) {
+        override fun setMoney(text : String) {
             money.setText(text)
+        }
+
+        override fun showKeyboard() {
+            money.post {
+                money.showKeyboard()
+            }
         }
 
         fun getDisplayData() = CountryRate.parse(country.text.toString(), money.text.toString())
