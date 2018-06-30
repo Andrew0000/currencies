@@ -7,10 +7,10 @@ data class CountryRate(val name : String, val rate : Float) {
 
     companion object {
         fun parse(name : String, rate : String) : CountryRate {
-            try {
-                return CountryRate(name, rate.toFloat())
+            return try {
+                CountryRate(name, rate.toFloat())
             } catch (e : NumberFormatException) {
-                return CountryRate(name, 0f)
+                CountryRate(name, 0f)
             }
         }
     }
