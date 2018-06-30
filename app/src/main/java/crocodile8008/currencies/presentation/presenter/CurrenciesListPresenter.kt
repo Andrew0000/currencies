@@ -30,7 +30,6 @@ class CurrenciesListPresenter @Inject constructor(
     fun onViewCreated(view : CurrenciesView) {
         this.view = view
         Lo.i("onViewCreated: $view")
-        repo.startUpdates()
         repo.observeAllUpdates()
                 .subscribeOn(Schedulers.io())
                 .flatMap{ Observable.just(
@@ -49,6 +48,11 @@ class CurrenciesListPresenter @Inject constructor(
                         { Lo.e("error", it) },
                         disposable
                 )
+    }
+
+    fun onResume() {
+        Lo.i("onResume")
+        repo.startUpdates()
     }
 
     private fun updateDisplayDataOnSuccess(data: List<String>) {
@@ -114,9 +118,13 @@ class CurrenciesListPresenter @Inject constructor(
         return result
     }
 
+    fun onPause() {
+        Lo.i("onPause")
+        repo.stopUpdates()
+    }
+
     fun onDestroyView() {
         Lo.i("onDestroyView: $view")
-        repo.stopUpdates()
         disposable.clear()
     }
 }

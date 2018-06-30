@@ -34,6 +34,7 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Lo.i("onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = adapter
@@ -58,6 +59,11 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         presenter.onViewCreated(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        presenter.onResume()
+    }
+
     override fun showProgress() {
         progressBar.visibility = View.VISIBLE
     }
@@ -73,6 +79,11 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
 
     override fun scrollToTop() {
         recycler.scrollToPosition(0)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.onPause()
     }
 
     override fun onDestroyView() {
