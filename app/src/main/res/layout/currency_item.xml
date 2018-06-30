@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:inputType="numberDecimal"
+        android:imeOptions="actionDone"
         tools:text="100"
         android:minWidth="60dp"
         android:gravity="right"
