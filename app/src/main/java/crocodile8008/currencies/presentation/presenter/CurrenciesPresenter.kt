@@ -2,9 +2,10 @@ package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
-import crocodile8008.currencies.data.model.CountryRate
+import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
+import crocodile8008.currencies.utils.hasNoPosition
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -56,18 +57,31 @@ class CurrenciesPresenter @Inject constructor(
         view.hideProgress()
     }
 
-    fun onClickItem(item : String) {
-        Lo.i("onClickItem: $item")
-        viewModel.selectedCountry = item
+    fun onClickItem(holder : CurrenciesAdapter.CurrencyViewHolder) {
+        val data = holder.getDisplayData()
+        Lo.i("onClickItem: $holder, $data")
+        viewModel.displayCountWhenWasBeforeMainPosition = data.rate
+        viewModel.selectedCountry = data.name
         reorderAndDisplay(viewModel.lastDisplayed)
         view.scrollToTop()
+        holder.showKeyboard()
     }
 
-    fun onTypedChanges(item : CountryRate) {
-        Lo.i("onTypedChanges: $item")
-        if (item.name.isEmpty() || viewModel.selectedCountry != item.name) {
+    fun onTextFocus(holder : CurrenciesAdapter.CurrencyViewHolder) {
+        val item = holder.getDisplayData()
+        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.selectedCountry == item.name) {
             return
         }
+        Lo.d("onTextFocus: $holder, $item")
+        onClickItem(holder)
+    }
+
+    fun onTypedChanges(holder : CurrenciesAdapter.CurrencyViewHolder) {
+        val item = holder.getDisplayData()
+        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.selectedCountry != item.name) {
+            return
+        }
+        Lo.i("onTypedChanges: $holder, $item")
         viewModel.typedCount = item.rate
     }
 

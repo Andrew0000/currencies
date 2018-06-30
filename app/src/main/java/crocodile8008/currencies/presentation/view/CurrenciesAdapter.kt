@@ -27,9 +27,9 @@ class CurrenciesAdapter @Inject constructor(
     private val currencyPresenter: CurrencyItemsPresenter) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
     private val values = ArrayList<String>()
-    private val clickSubject = PublishSubject.create<String>()
-    private val typedSubject = PublishSubject.create<CountryRate>()
-
+    private val clickSubject = PublishSubject.create<CurrencyViewHolder>()
+    private val focusSubject = PublishSubject.create<CurrencyViewHolder>()
+    private val typedSubject = PublishSubject.create<CurrencyViewHolder>()
 
     @MainThread
     fun update(newValues : List<String>) {
@@ -40,9 +40,11 @@ class CurrenciesAdapter @Inject constructor(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun observeClicks() : Observable<String> = clickSubject
+    fun observeClicks() : Observable<CurrencyViewHolder> = clickSubject
 
-    fun observeTypedMoney() : Observable<CountryRate> = typedSubject
+    fun observeTextFocus() : Observable<CurrencyViewHolder> = focusSubject
+
+    fun observeTypedMoney() : Observable<CurrencyViewHolder> = typedSubject
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(inflater.inflate(R.layout.currency_item, parent, false))
@@ -50,16 +52,7 @@ class CurrenciesAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
         val item = values[position]
-        holder.country.text = item
-        holder.itemView.setOnClickListener {
-            holder.money.showKeyboard()
-            clickSubject.onNext(item)
-        }
-        if (position == 0) {
-            holder.listenChanges()
-        } else {
-            holder.skipChangesAndClicks()
-        }
+        holder.setCountry(item)
         currencyPresenter.onBindViewHolder(holder, item)
     }
 
@@ -70,30 +63,44 @@ class CurrenciesAdapter @Inject constructor(
     override fun getItemCount() = values.size
 
     inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val country: TextView = view.countryCodeTextView
-        val money: EditText = view.money
 
-        fun listenChanges() {
-            money.addTextChangedListener(textWatcher)
-            money.setOnFocusChangeListener(null)
+        private val country: TextView = view.countryCodeTextView
+        private val money: EditText = view.money
+
+        init {
+            itemView.setOnClickListener {
+                clickSubject.onNext(this)
+            }
+            money.post{
+                money.setOnFocusChangeListener { _, focused ->
+                    if (focused) {
+                        focusSubject.onNext(this)
+                    }
+                }
+            }
+            money.addTextChangedListener(object : EmptyTextWatcher() {
+                override fun afterTextChanged(s: Editable?) {
+                    if (s != null) {
+                        typedSubject.onNext(this@CurrencyViewHolder)
+                    }
+                }
+            })
         }
 
-        fun skipChangesAndClicks() {
-            money.removeTextChangedListener(textWatcher)
-            money.setOnFocusChangeListener { _, focused ->
-                if (focused) {
-                    itemView.performClick()
-                }
+        fun showKeyboard() {
+            money.post {
+                money.showKeyboard()
             }
         }
 
-        private val textWatcher = object : EmptyTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                if (s == null) {
-                    return
-                }
-                typedSubject.onNext(CountryRate.parse(country.text.toString(), s.toString()))
-            }
+        fun setCountry(text : String) {
+            country.text = text
         }
+
+        fun setMoney(text : String) {
+            money.setText(text)
+        }
+
+        fun getDisplayData() = CountryRate.parse(country.text.toString(), money.text.toString())
     }
 }

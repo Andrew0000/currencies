@@ -10,5 +10,6 @@ class CurrenciesViewModel : ViewModel() {
 
     var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
     var typedCount = 0f
+    var displayCountWhenWasBeforeMainPosition = 0f
     var lastDisplayed : List<String> = ArrayList()
 }

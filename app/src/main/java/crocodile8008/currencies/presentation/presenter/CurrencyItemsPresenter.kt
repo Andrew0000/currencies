@@ -29,10 +29,13 @@ class CurrencyItemsPresenter @Inject constructor(
     fun onBindViewHolder(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
         observeRepoIfNot()
         holders[holder] = country
-        if (!last.isEmpty()) {
-            if (country != viewModel.selectedCountry) {
-                updateCurrencyOnItem(holder, country)
-            }
+        if (last.isEmpty()) {
+            return
+        }
+        if (country == viewModel.selectedCountry) {
+            holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
+        } else {
+            updateCurrencyOnItem(holder, country)
         }
     }
 
@@ -56,7 +59,7 @@ class CurrencyItemsPresenter @Inject constructor(
 
     private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
         val exchanged = exchanger.exchange(last, viewModel.selectedCountry, viewModel.typedCount, country)
-        holder.money.setText(exchanged.toString())
+        holder.setMoney(exchanged.toString())
     }
 
     @MainThread
