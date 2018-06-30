@@ -1,11 +1,12 @@
 package crocodile8008.currencies.utils
 
 import crocodile8008.currencies.data.CurrenciesBundle
+import javax.inject.Inject
 
 /**
  * Created by Andrei Riik in 2018.
  */
-class Exchanger {
+class Exchanger @Inject constructor() {
 
     /**
      * See ExchangerTest
