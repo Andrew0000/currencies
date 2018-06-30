@@ -67,11 +67,16 @@ class CurrenciesListPresenter @Inject constructor(
         holder.showKeyboard()
     }
 
-    fun onTextFocus(holder : CurrenciesAdapter.CurrencyViewHolder) {
+    fun isBasePosition(holder : CurrenciesAdapter.CurrencyViewHolder) : Boolean {
         val item = holder.getDisplayData()
         if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.isSelectedCountry(item.name)) {
-            return
+            return false
         }
+        return true
+    }
+
+    fun onTextFocus(holder : CurrenciesAdapter.CurrencyViewHolder) {
+        val item = holder.getDisplayData()
         Lo.d("onTextFocus: $holder, $item")
         onClickItem(holder)
     }

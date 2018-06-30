@@ -10,7 +10,9 @@ import crocodile8008.common.log.Lo
 import crocodile8008.currencies.App
 import crocodile8008.currencies.R
 import crocodile8008.currencies.presentation.presenter.CurrenciesListPresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.currencies_fragment.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -35,8 +37,15 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         recycler.layoutManager = LinearLayoutManager(activity)
         recycler.adapter = adapter
         recycler.setHasFixedSize(true)
-        adapter.observeClicks().subscribe { presenter.onClickItem(it) }
-        adapter.observeTextFocus().subscribe { presenter.onTextFocus(it) }
+        adapter.observeClicks()
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { presenter.onClickItem(it) }
+        adapter.observeTextFocus()
+                .filter { presenter.isBasePosition(it) }
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { presenter.onTextFocus(it) }
         adapter.observeTypedMoney().subscribe { presenter.onTypedChanges(it) }
         presenter.onViewCreated(this)
     }
