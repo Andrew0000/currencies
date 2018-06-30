@@ -1,4 +1,4 @@
-package crocodile8008.currencies.data
+package crocodile8008.currencies.data.model
 
 /**
  * Created by Andrei Riik in 2018.

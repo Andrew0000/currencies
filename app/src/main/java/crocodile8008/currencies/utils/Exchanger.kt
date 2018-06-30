@@ -1,6 +1,6 @@
 package crocodile8008.currencies.utils
 
-import crocodile8008.currencies.data.CurrenciesBundle
+import crocodile8008.currencies.data.model.CurrenciesBundle
 import javax.inject.Inject
 
 /**

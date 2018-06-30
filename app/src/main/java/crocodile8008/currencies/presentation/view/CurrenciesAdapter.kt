@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import crocodile8008.currencies.R
+import crocodile8008.currencies.data.model.CountryRate
 import crocodile8008.currencies.presentation.presenter.CurrencyItemsPresenter
 import crocodile8008.currencies.utils.EmptyTextWatcher
 import crocodile8008.currencies.utils.showKeyboard
@@ -27,7 +28,7 @@ class CurrenciesAdapter @Inject constructor(
 
     private val values = ArrayList<String>()
     private val clickSubject = PublishSubject.create<String>()
-    private val typedSubject = PublishSubject.create<Pair<String, String>>()
+    private val typedSubject = PublishSubject.create<CountryRate>()
 
 
     @MainThread
@@ -41,7 +42,7 @@ class CurrenciesAdapter @Inject constructor(
 
     fun observeClicks() : Observable<String> = clickSubject
 
-    fun observeTypedMoney() : Observable<Pair<String, String>> = typedSubject
+    fun observeTypedMoney() : Observable<CountryRate> = typedSubject
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(inflater.inflate(R.layout.currency_item, parent, false))
@@ -91,7 +92,7 @@ class CurrenciesAdapter @Inject constructor(
                 if (s == null) {
                     return
                 }
-                typedSubject.onNext(Pair(country.text.toString(), s.toString()))
+                typedSubject.onNext(CountryRate.parse(country.text.toString(), s.toString()))
             }
         }
     }

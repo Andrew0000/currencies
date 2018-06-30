@@ -2,8 +2,8 @@ package crocodile8008.currencies.presentation.presenter
 
 import android.support.annotation.MainThread
 import crocodile8008.common.log.Lo
-import crocodile8008.currencies.data.CurrenciesBundle
 import crocodile8008.currencies.data.CurrenciesRepo
+import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
 import crocodile8008.currencies.utils.Exchanger

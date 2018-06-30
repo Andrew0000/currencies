@@ -1,6 +1,7 @@
 package crocodile8008.currencies.data
 
 import crocodile8008.common.log.Lo
+import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.data.network.CurrenciesService
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable

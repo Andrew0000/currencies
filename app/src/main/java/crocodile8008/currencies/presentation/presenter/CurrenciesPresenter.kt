@@ -2,6 +2,7 @@ package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
+import crocodile8008.currencies.data.model.CountryRate
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
@@ -62,17 +63,12 @@ class CurrenciesPresenter @Inject constructor(
         view.scrollToTop()
     }
 
-    fun onTypedChanges(text : Pair<String, String>) {
-        Lo.i("onTypedChanges: $text")
-        if (text.first.isEmpty() || viewModel.selectedCountry != text.first) {
+    fun onTypedChanges(item : CountryRate) {
+        Lo.i("onTypedChanges: $item")
+        if (item.name.isEmpty() || viewModel.selectedCountry != item.name) {
             return
         }
-        try {
-            val floatValue = text.second.toFloat()
-            viewModel.typedCount = floatValue
-        } catch (e : NumberFormatException) {
-            viewModel.typedCount = 0f
-        }
+        viewModel.typedCount = item.rate
     }
 
     private fun reorderAndDisplay(list : List<String>) {

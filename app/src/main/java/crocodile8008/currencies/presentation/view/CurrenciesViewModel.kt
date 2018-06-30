@@ -1,7 +1,7 @@
 package crocodile8008.currencies.presentation.view
 
 import android.arch.lifecycle.ViewModel
-import crocodile8008.currencies.data.CurrenciesBundle
+import crocodile8008.currencies.data.model.CurrenciesBundle
 
 /**
  * Created by Andrei Riik in 2018.
