@@ -15,7 +15,7 @@ import javax.inject.Inject
 /**
  * Created by Andrei Riik in 2018.
  */
-class CurrencyItemsPresenter @Inject constructor(
+class CurrencyItemPresenter @Inject constructor(
     private val repo: CurrenciesRepo,
     private val exchanger: Exchanger,
     private val viewModel : CurrenciesViewModel) {
@@ -29,6 +29,7 @@ class CurrencyItemsPresenter @Inject constructor(
     fun onBindViewHolder(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
         observeRepoIfNot()
         holders[holder] = country
+        holder.setCountry(country)
         if (last.isEmpty()) {
             return
         }

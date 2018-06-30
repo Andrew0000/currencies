@@ -11,7 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import crocodile8008.currencies.R
 import crocodile8008.currencies.data.model.CountryRate
-import crocodile8008.currencies.presentation.presenter.CurrencyItemsPresenter
+import crocodile8008.currencies.presentation.presenter.CurrencyItemPresenter
 import crocodile8008.currencies.utils.EmptyTextWatcher
 import crocodile8008.currencies.utils.showKeyboard
 import io.reactivex.Observable
@@ -24,12 +24,18 @@ import javax.inject.Inject
  */
 class CurrenciesAdapter @Inject constructor(
     private val inflater : LayoutInflater,
-    private val currencyPresenter: CurrencyItemsPresenter) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
+    private val currencyPresenter: CurrencyItemPresenter) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
     private val values = ArrayList<String>()
     private val clickSubject = PublishSubject.create<CurrencyViewHolder>()
     private val focusSubject = PublishSubject.create<CurrencyViewHolder>()
     private val typedSubject = PublishSubject.create<CurrencyViewHolder>()
+
+    fun observeClicks() : Observable<CurrencyViewHolder> = clickSubject
+
+    fun observeTextFocus() : Observable<CurrencyViewHolder> = focusSubject
+
+    fun observeTypedMoney() : Observable<CurrencyViewHolder> = typedSubject
 
     @MainThread
     fun update(newValues : List<String>) {
@@ -40,19 +46,12 @@ class CurrenciesAdapter @Inject constructor(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun observeClicks() : Observable<CurrencyViewHolder> = clickSubject
-
-    fun observeTextFocus() : Observable<CurrencyViewHolder> = focusSubject
-
-    fun observeTypedMoney() : Observable<CurrencyViewHolder> = typedSubject
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(inflater.inflate(R.layout.currency_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
         val item = values[position]
-        holder.setCountry(item)
         currencyPresenter.onBindViewHolder(holder, item)
     }
 
