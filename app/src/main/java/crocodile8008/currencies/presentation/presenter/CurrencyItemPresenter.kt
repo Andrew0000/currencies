@@ -28,7 +28,7 @@ class CurrencyItemPresenter @Inject constructor(
         observeRepoIfNot()
         holders[holder] = country
         holder.setCountry(country)
-        if (viewModel.lastFullDisplayed.isEmpty()) {
+        if (viewModel.lastDisplayedFull.isEmpty()) {
             return
         }
         if (viewModel.isSelectedCountry(country)) {
@@ -55,7 +55,7 @@ class CurrencyItemPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            viewModel.lastFullDisplayed = it
+                            viewModel.lastDisplayedFull = it
                             holders.forEach { (holder, country) ->
                                 if (!viewModel.isSelectedCountry(country)) {
                                     updateCurrencyOnItem(holder, country)
@@ -67,7 +67,8 @@ class CurrencyItemPresenter @Inject constructor(
     }
 
     private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
-        val exchanged = exchanger.exchange(viewModel.lastFullDisplayed, viewModel.selectedCountry, viewModel.typedCount, country)
+        val exchanged = exchanger.exchange(
+                viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.typedCount, country)
         holder.setMoney(exchanged.toString())
     }
 

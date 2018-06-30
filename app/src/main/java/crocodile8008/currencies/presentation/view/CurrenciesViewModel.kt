@@ -14,8 +14,8 @@ class CurrenciesViewModel : ViewModel() {
     var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
     var typedCount = 0f
     var displayCountWhenWasBeforeMainPosition = NOTHING
-    var lastDisplayed : List<String> = ArrayList()
-    var lastFullDisplayed : CurrenciesBundle = CurrenciesBundle.EMPTY
+    var lastDisplayedList : List<String> = ArrayList()
+    var lastDisplayedFull : CurrenciesBundle = CurrenciesBundle.EMPTY
 
     fun isSelectedCountry(country : String) = country == selectedCountry
 }

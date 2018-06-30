@@ -62,7 +62,7 @@ class CurrenciesListPresenter @Inject constructor(
         Lo.i("onClickItem: $holder, $data")
         viewModel.displayCountWhenWasBeforeMainPosition = data.rate
         viewModel.selectedCountry = data.name
-        reorderAndDisplay(viewModel.lastDisplayed)
+        reorderAndDisplay(viewModel.lastDisplayedList)
         view.scrollToTop()
         holder.showKeyboard()
     }
@@ -88,7 +88,7 @@ class CurrenciesListPresenter @Inject constructor(
     private fun reorderAndDisplay(list : List<String>) {
         val reordered = reorderAccordingSelected(list)
         view.showData(reordered)
-        viewModel.lastDisplayed = reordered
+        viewModel.lastDisplayedList = reordered
     }
 
     private fun reorderAccordingSelected(list : List<String>) : List<String> {
