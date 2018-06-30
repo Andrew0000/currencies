@@ -39,6 +39,10 @@ class CurrenciesPresenter @Inject constructor(
     }
 
     private fun updateDisplayDataOnSuccess(data: CurrenciesBundle) {
+        if (data.isEmpty()) {
+            view.showProgress()
+            return
+        }
         val list = data.rates.map { mapEntry -> Pair(mapEntry.key, mapEntry.value) }
         reorderAndDisplay(list)
         view.hideProgress()

@@ -61,7 +61,7 @@ class CurrenciesRepo @Inject constructor(private val service: CurrenciesService)
         return CurrenciesBundle(
                 base = body["base"] as String,
                 date = body["date"] as String,
-                rates = body["rates"] as Map<String, Float>
+                rates = (body["rates"] as Map<String, Double>).mapValues { it.value.toFloat() }
         )
     }
 }
