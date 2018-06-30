@@ -12,4 +12,6 @@ class CurrenciesViewModel : ViewModel() {
     var typedCount = 0f
     var displayCountWhenWasBeforeMainPosition = 0f
     var lastDisplayed : List<String> = ArrayList()
+
+    fun isSelectedCountry(country : String) = country == selectedCountry
 }

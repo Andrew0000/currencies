@@ -33,7 +33,7 @@ class CurrencyItemPresenter @Inject constructor(
         if (last.isEmpty()) {
             return
         }
-        if (country == viewModel.selectedCountry) {
+        if (viewModel.isSelectedCountry(country)) {
             holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
         } else {
             updateCurrencyOnItem(holder, country)
@@ -48,7 +48,7 @@ class CurrencyItemPresenter @Inject constructor(
                             {
                                 last = it
                                 holders.forEach { (holder, country) ->
-                                    if (country != viewModel.selectedCountry) {
+                                    if (!viewModel.isSelectedCountry(country)) {
                                         updateCurrencyOnItem(holder, country)
                                     }
                                 }

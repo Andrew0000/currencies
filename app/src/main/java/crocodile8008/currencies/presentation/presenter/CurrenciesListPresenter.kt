@@ -69,7 +69,7 @@ class CurrenciesListPresenter @Inject constructor(
 
     fun onTextFocus(holder : CurrenciesAdapter.CurrencyViewHolder) {
         val item = holder.getDisplayData()
-        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.selectedCountry == item.name) {
+        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.isSelectedCountry(item.name)) {
             return
         }
         Lo.d("onTextFocus: $holder, $item")
@@ -78,7 +78,7 @@ class CurrenciesListPresenter @Inject constructor(
 
     fun onTypedChanges(holder : CurrenciesAdapter.CurrencyViewHolder) {
         val item = holder.getDisplayData()
-        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.selectedCountry != item.name) {
+        if (holder.hasNoPosition() || item.name.isEmpty() || !viewModel.isSelectedCountry(item.name)) {
             return
         }
         Lo.i("onTypedChanges: $holder, $item")
@@ -92,12 +92,13 @@ class CurrenciesListPresenter @Inject constructor(
     }
 
     private fun reorderAccordingSelected(list : List<String>) : List<String> {
-        if (viewModel.selectedCountry.isEmpty() || !list.contains(viewModel.selectedCountry)) {
+        val selected = viewModel.selectedCountry
+        if (selected.isEmpty() || !list.contains(selected)) {
             return list
         }
         val result = ArrayList<String>(list)
-        result.remove(viewModel.selectedCountry)
-        result.add(0, viewModel.selectedCountry)
+        result.remove(selected)
+        result.add(0, selected)
         return result
     }
 
