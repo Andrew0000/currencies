@@ -3,7 +3,6 @@ package crocodile8008.currencies.presentation.presenter
 import android.support.annotation.MainThread
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
-import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
 import crocodile8008.currencies.utils.Exchanger
@@ -21,7 +20,6 @@ class CurrencyItemPresenter @Inject constructor(
     private val viewModel : CurrenciesViewModel) {
 
     private val holders = WeakHashMap<CurrenciesAdapter.CurrencyViewHolder, String>()
-    private var last : CurrenciesBundle = CurrenciesBundle.EMPTY
 
     private var disposable : Disposable? = null
 
@@ -30,13 +28,22 @@ class CurrencyItemPresenter @Inject constructor(
         observeRepoIfNot()
         holders[holder] = country
         holder.setCountry(country)
-        if (last.isEmpty()) {
+        if (viewModel.lastFullDisplayed.isEmpty()) {
             return
         }
         if (viewModel.isSelectedCountry(country)) {
-            holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
+            updateCurrencyOnBaseItem(holder)
         } else {
             updateCurrencyOnItem(holder, country)
+        }
+    }
+
+    private fun updateCurrencyOnBaseItem(holder: CurrenciesAdapter.CurrencyViewHolder) {
+        if (viewModel.displayCountWhenWasBeforeMainPosition != CurrenciesViewModel.NOTHING) {
+            holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
+            viewModel.displayCountWhenWasBeforeMainPosition = CurrenciesViewModel.NOTHING
+        } else {
+            holder.setMoney(viewModel.typedCount.toString())
         }
     }
 
@@ -48,7 +55,7 @@ class CurrencyItemPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            last = it
+                            viewModel.lastFullDisplayed = it
                             holders.forEach { (holder, country) ->
                                 if (!viewModel.isSelectedCountry(country)) {
                                     updateCurrencyOnItem(holder, country)
@@ -60,7 +67,7 @@ class CurrencyItemPresenter @Inject constructor(
     }
 
     private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
-        val exchanged = exchanger.exchange(last, viewModel.selectedCountry, viewModel.typedCount, country)
+        val exchanged = exchanger.exchange(viewModel.lastFullDisplayed, viewModel.selectedCountry, viewModel.typedCount, country)
         holder.setMoney(exchanged.toString())
     }
 
