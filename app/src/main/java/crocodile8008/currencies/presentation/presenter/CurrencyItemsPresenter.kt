@@ -30,9 +30,9 @@ class CurrencyItemsPresenter @Inject constructor(
         observeRepoIfNot()
         holders[holder] = country
         if (!last.isEmpty()) {
-            val baseCountry = if (viewModel.selectedCountry.isEmpty()) last.base else viewModel.selectedCountry
-            val exchanged = exchanger.exchange(last, baseCountry, 1f, country)
-            holder.money.setText(exchanged.toString())
+            if (country != viewModel.selectedCountry) {
+                updateCurrencyOnItem(holder, country)
+            }
         }
     }
 
@@ -42,16 +42,21 @@ class CurrencyItemsPresenter @Inject constructor(
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             {
-                                last = it;
-                                val baseCountry = if (viewModel.selectedCountry.isEmpty()) it.base else viewModel.selectedCountry
+                                last = it
                                 holders.forEach { (holder, country) ->
-                                    val exchanged = exchanger.exchange(it, baseCountry, 1f, country)
-                                    holder.money.setText(exchanged.toString())
+                                    if (country != viewModel.selectedCountry) {
+                                        updateCurrencyOnItem(holder, country)
+                                    }
                                 }
                             },
                             { Lo.e("", it) }
                     )
         }
+    }
+
+    private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
+        val exchanged = exchanger.exchange(last, viewModel.selectedCountry, viewModel.typedCount, country)
+        holder.money.setText(exchanged.toString())
     }
 
     @MainThread

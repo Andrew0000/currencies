@@ -1,12 +1,14 @@
 package crocodile8008.currencies.presentation.view
 
 import android.arch.lifecycle.ViewModel
+import crocodile8008.currencies.data.CurrenciesBundle
 
 /**
  * Created by Andrei Riik in 2018.
  */
 class CurrenciesViewModel : ViewModel() {
 
-    var selectedCountry = ""
+    var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
+    var typedCount = 0f
     var lastDisplayed : List<String> = ArrayList()
 }

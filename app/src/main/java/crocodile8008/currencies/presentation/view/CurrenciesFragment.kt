@@ -36,6 +36,9 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         recycler.adapter = adapter
         recycler.setHasFixedSize(true)
         adapter.observeClicks().subscribe { presenter.onClickItem(it) }
+        adapter.observeTypedMoney()
+                .distinctUntilChanged()
+                .subscribe { presenter.onTypedChanges(it) }
         presenter.onViewCreated(this)
     }
 

@@ -9,7 +9,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -29,7 +28,14 @@ class CurrenciesPresenter @Inject constructor(
         repo.startUpdates()
         repo.observeAllUpdates()
                 .subscribeOn(Schedulers.io())
-                .flatMap{ Observable.just(it.rates.map { it.key }) }
+                .flatMap{ Observable.just(
+                                if (it.isEmpty()) {
+                                    ArrayList()
+                                } else {
+                                    ArrayList(it.rates.map { it.key }).apply { add(0, it.base) }
+                                }
+                )
+                }
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showProgress() }
@@ -54,6 +60,19 @@ class CurrenciesPresenter @Inject constructor(
         viewModel.selectedCountry = item
         reorderAndDisplay(viewModel.lastDisplayed)
         view.scrollToTop()
+    }
+
+    fun onTypedChanges(text : Pair<String, String>) {
+        Lo.i("onTypedChanges: $text")
+        if (text.first.isEmpty() || viewModel.selectedCountry != text.first) {
+            return
+        }
+        try {
+            val floatValue = text.second.toFloat()
+            viewModel.typedCount = floatValue
+        } catch (e : NumberFormatException) {
+            viewModel.typedCount = 0f
+        }
     }
 
     private fun reorderAndDisplay(list : List<String>) {

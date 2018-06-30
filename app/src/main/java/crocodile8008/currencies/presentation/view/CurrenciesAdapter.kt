@@ -27,16 +27,8 @@ class CurrenciesAdapter @Inject constructor(
 
     private val values = ArrayList<String>()
     private val clickSubject = PublishSubject.create<String>()
-    private val typedSubject = PublishSubject.create<String>()
+    private val typedSubject = PublishSubject.create<Pair<String, String>>()
 
-    private val textWatcher = object : EmptyTextWatcher() {
-        override fun afterTextChanged(s: Editable?) {
-            if (s == null) {
-                return
-            }
-            typedSubject.onNext(s.toString())
-        }
-    }
 
     @MainThread
     fun update(newValues : List<String>) {
@@ -49,7 +41,7 @@ class CurrenciesAdapter @Inject constructor(
 
     fun observeClicks() : Observable<String> = clickSubject
 
-    fun observeTypedMoney() : Observable<String> = typedSubject
+    fun observeTypedMoney() : Observable<Pair<String, String>> = typedSubject
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(inflater.inflate(R.layout.currency_item, parent, false))
@@ -63,15 +55,9 @@ class CurrenciesAdapter @Inject constructor(
             clickSubject.onNext(item)
         }
         if (position == 0) {
-            holder.money.addTextChangedListener(textWatcher)
-            holder.money.setOnFocusChangeListener(null)
+            holder.listenChanges()
         } else {
-            holder.money.removeTextChangedListener(textWatcher)
-            holder.money.setOnFocusChangeListener { view, focused ->
-                if (focused) {
-                    holder.itemView.performClick()
-                }
-            }
+            holder.skipChangesAndClicks()
         }
         currencyPresenter.onBindViewHolder(holder, item)
     }
@@ -82,8 +68,31 @@ class CurrenciesAdapter @Inject constructor(
 
     override fun getItemCount() = values.size
 
-    class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val country: TextView = view.countryCodeTextView
         val money: EditText = view.money
+
+        fun listenChanges() {
+            money.addTextChangedListener(textWatcher)
+            money.setOnFocusChangeListener(null)
+        }
+
+        fun skipChangesAndClicks() {
+            money.removeTextChangedListener(textWatcher)
+            money.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    itemView.performClick()
+                }
+            }
+        }
+
+        private val textWatcher = object : EmptyTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                if (s == null) {
+                    return
+                }
+                typedSubject.onNext(Pair(country.text.toString(), s.toString()))
+            }
+        }
     }
 }

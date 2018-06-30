@@ -10,6 +10,7 @@ data class CurrenciesBundle(
 ) {
     companion object {
         val EMPTY = CurrenciesBundle("")
+        const val DEFAULT_COUNTRY = "EUR"
     }
 
     fun isEmpty() = this == EMPTY
