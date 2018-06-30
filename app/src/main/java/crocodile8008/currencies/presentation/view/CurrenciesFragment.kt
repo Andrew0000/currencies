@@ -60,4 +60,9 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         presenter.onDestroyView()
         super.onDestroyView()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        App.instance.refWatcher.watch(this)
+    }
 }

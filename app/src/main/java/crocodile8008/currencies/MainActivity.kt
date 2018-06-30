@@ -14,5 +14,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         App.instance.destroyMainActivityComponent()
+        App.instance.refWatcher.watch(this)
     }
 }
