@@ -41,21 +41,22 @@ class CurrencyItemPresenter @Inject constructor(
     }
 
     private fun observeRepoIfNot() {
-        if (disposable == null) {
-            disposable = repo.observeAllUpdates()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            {
-                                last = it
-                                holders.forEach { (holder, country) ->
-                                    if (!viewModel.isSelectedCountry(country)) {
-                                        updateCurrencyOnItem(holder, country)
-                                    }
-                                }
-                            },
-                            { Lo.e("", it) }
-                    )
+        if (disposable != null) {
+            return
         }
+        disposable = repo.observeAllUpdates()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        {
+                            last = it
+                            holders.forEach { (holder, country) ->
+                                if (!viewModel.isSelectedCountry(country)) {
+                                    updateCurrencyOnItem(holder, country)
+                                }
+                            }
+                        },
+                        { Lo.e("", it) }
+                )
     }
 
     private fun updateCurrencyOnItem(holder: CurrenciesAdapter.CurrencyViewHolder, country: String) {
