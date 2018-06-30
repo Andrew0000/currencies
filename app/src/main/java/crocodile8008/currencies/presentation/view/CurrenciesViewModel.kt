@@ -8,5 +8,5 @@ import android.arch.lifecycle.ViewModel
 class CurrenciesViewModel : ViewModel() {
 
     var selectedCountry = ""
-    var lastDisplayed : List<Pair<String, Float>> = ArrayList()
+    var lastDisplayed : List<String> = ArrayList()
 }

@@ -47,7 +47,7 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         progressBar.visibility = View.INVISIBLE
     }
 
-    override fun showData(data : List<Pair<String, Float>>) {
+    override fun showData(data : List<String>) {
         Lo.d("showData: $data")
         adapter.update(data)
     }
@@ -58,6 +58,7 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
 
     override fun onDestroyView() {
         presenter.onDestroyView()
+        adapter.onDestroyView()
         super.onDestroyView()
     }
 

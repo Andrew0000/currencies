@@ -25,6 +25,9 @@ class CurrenciesRepo @Inject constructor(private val service: CurrenciesService)
     fun observeAllUpdates() : Observable<CurrenciesBundle> = updates;
 
     fun startUpdates() {
+        if (updatesDisposable != null) {
+            return
+        }
         updatesDisposable = Observable
                 .interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
@@ -41,6 +44,7 @@ class CurrenciesRepo @Inject constructor(private val service: CurrenciesService)
 
     fun stopUpdates() {
         updatesDisposable?.dispose()
+        updatesDisposable = null
     }
 
     private fun loadCurrencies() : Observable<CurrenciesBundle> {

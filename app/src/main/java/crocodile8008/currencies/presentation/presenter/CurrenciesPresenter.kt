@@ -1,11 +1,11 @@
 package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
-import crocodile8008.currencies.data.CurrenciesBundle
 import crocodile8008.currencies.data.CurrenciesRepo
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.view.CurrenciesViewModel
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -29,6 +29,8 @@ class CurrenciesPresenter @Inject constructor(
         repo.startUpdates()
         repo.observeAllUpdates()
                 .subscribeOn(Schedulers.io())
+                .flatMap{ Observable.just(it.rates.map { it.key }) }
+                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showProgress() }
                 .subscribeAndAddToDisposable(
@@ -38,47 +40,36 @@ class CurrenciesPresenter @Inject constructor(
                 )
     }
 
-    private fun updateDisplayDataOnSuccess(data: CurrenciesBundle) {
+    private fun updateDisplayDataOnSuccess(data: List<String>) {
         if (data.isEmpty()) {
             view.showProgress()
             return
         }
-        val list = data.rates.map { mapEntry -> Pair(mapEntry.key, mapEntry.value) }
-        reorderAndDisplay(list)
+        reorderAndDisplay(data)
         view.hideProgress()
     }
 
-    fun onClickItem(item : Pair<String, Float>) {
+    fun onClickItem(item : String) {
         Lo.i("onClickItem: $item")
-        viewModel.selectedCountry = item.first
+        viewModel.selectedCountry = item
         reorderAndDisplay(viewModel.lastDisplayed)
         view.scrollToTop()
     }
 
-    private fun reorderAndDisplay(list : List<Pair<String, Float>>) {
+    private fun reorderAndDisplay(list : List<String>) {
         val reordered = reorderAccordingSelected(list)
         view.showData(reordered)
         viewModel.lastDisplayed = reordered
     }
 
-    private fun reorderAccordingSelected(list : List<Pair<String, Float>>) : List<Pair<String, Float>> {
-        if (viewModel.selectedCountry.isEmpty()) {
+    private fun reorderAccordingSelected(list : List<String>) : List<String> {
+        if (viewModel.selectedCountry.isEmpty() || !list.contains(viewModel.selectedCountry)) {
             return list
         }
-        var foundedItem : Pair<String, Float>? = null
-        for (item in list) {
-            if (item.first == viewModel.selectedCountry) {
-                foundedItem = item
-                break
-            }
-        }
-        if (foundedItem != null) {
-            val result = ArrayList<Pair<String, Float>>(list)
-            result.remove(foundedItem)
-            result.add(0, foundedItem)
-            return result
-        }
-        return list
+        val result = ArrayList<String>(list)
+        result.remove(viewModel.selectedCountry)
+        result.add(0, viewModel.selectedCountry)
+        return result
     }
 
     fun onDestroyView() {

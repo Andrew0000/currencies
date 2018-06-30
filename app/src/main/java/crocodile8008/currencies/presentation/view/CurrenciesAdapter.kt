@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import crocodile8008.currencies.R
+import crocodile8008.currencies.presentation.presenter.CurrencyItemsPresenter
 import crocodile8008.currencies.utils.EmptyTextWatcher
 import crocodile8008.currencies.utils.showKeyboard
 import io.reactivex.Observable
@@ -21,10 +22,11 @@ import javax.inject.Inject
  * Created by Andrei Riik in 2018.
  */
 class CurrenciesAdapter @Inject constructor(
-    private val inflater : LayoutInflater) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
+    private val inflater : LayoutInflater,
+    private val currencyPresenter: CurrencyItemsPresenter) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
-    private val values = ArrayList<Pair<String, Float>>()
-    private val clickSubject = PublishSubject.create<Pair<String, Float>>()
+    private val values = ArrayList<String>()
+    private val clickSubject = PublishSubject.create<String>()
     private val typedSubject = PublishSubject.create<String>()
 
     private val textWatcher = object : EmptyTextWatcher() {
@@ -37,7 +39,7 @@ class CurrenciesAdapter @Inject constructor(
     }
 
     @MainThread
-    fun update(newValues : List<Pair<String, Float>>) {
+    fun update(newValues : List<String>) {
         val diffCallback = DiffCallback(ArrayList(values), ArrayList(newValues))
         values.clear()
         values.addAll(newValues)
@@ -45,7 +47,7 @@ class CurrenciesAdapter @Inject constructor(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun observeClicks() : Observable<Pair<String, Float>> = clickSubject
+    fun observeClicks() : Observable<String> = clickSubject
 
     fun observeTypedMoney() : Observable<String> = typedSubject
 
@@ -55,7 +57,7 @@ class CurrenciesAdapter @Inject constructor(
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
         val item = values[position]
-        holder.country.text = item.first
+        holder.country.text = item
         holder.itemView.setOnClickListener {
             holder.money.showKeyboard()
             clickSubject.onNext(item)
@@ -71,11 +73,16 @@ class CurrenciesAdapter @Inject constructor(
                 }
             }
         }
+        currencyPresenter.onBindViewHolder(holder, item)
+    }
+
+    fun onDestroyView() {
+        currencyPresenter.onDestroyView()
     }
 
     override fun getItemCount() = values.size
 
-    inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val country: TextView = view.countryCodeTextView
         val money: EditText = view.money
     }
