@@ -6,8 +6,8 @@ import android.support.v7.util.DiffUtil
  * Created by Andrei Riik in 2018.
  */
 class DiffCallback constructor(
-        private val old: List<String>,
-        private val current: List<String>) : DiffUtil.Callback() {
+    private val old: List<String>,
+    private val current: List<String>) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return old[oldItemPosition] == current[newItemPosition]

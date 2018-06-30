@@ -18,12 +18,10 @@ import javax.inject.Singleton
 @Singleton
 class CurrenciesRepo @Inject constructor(private val service: CurrenciesService) {
 
-    //TODO connectable better?
     private val updates = BehaviorSubject.createDefault<CurrenciesBundle>(CurrenciesBundle.EMPTY)
     private var updatesDisposable : Disposable? = null
-    private var last = CurrenciesBundle.EMPTY
 
-    fun observeAllUpdates() : Observable<CurrenciesBundle> = updates;
+    fun observeAllUpdates() : Observable<CurrenciesBundle> = updates
 
     fun startUpdates() {
         if (updatesDisposable != null) {
@@ -35,10 +33,7 @@ class CurrenciesRepo @Inject constructor(private val service: CurrenciesService)
                 .switchMap { loadCurrencies() }
                 .retry()
                 .subscribe(
-                        {
-                            last = it
-                            updates.onNext(it)
-                        },
+                        { updates.onNext(it) },
                         { Lo.e("error", it) }
                 )
     }
