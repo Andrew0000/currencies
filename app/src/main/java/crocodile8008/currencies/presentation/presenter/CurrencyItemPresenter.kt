@@ -4,8 +4,8 @@ import android.support.annotation.MainThread
 import android.support.v7.widget.RecyclerView
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
-import crocodile8008.currencies.presentation.view.CurrenciesViewModel
 import crocodile8008.currencies.presentation.view.ItemView
+import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
 import crocodile8008.currencies.utils.Exchanger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

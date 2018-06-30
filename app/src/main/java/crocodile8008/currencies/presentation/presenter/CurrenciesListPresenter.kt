@@ -4,7 +4,7 @@ import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
 import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesView
-import crocodile8008.currencies.presentation.view.CurrenciesViewModel
+import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
 import crocodile8008.currencies.utils.hasNoPosition
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
 import io.reactivex.Observable

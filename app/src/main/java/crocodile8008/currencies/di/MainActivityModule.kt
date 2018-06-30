@@ -3,7 +3,7 @@ package crocodile8008.currencies.di
 import android.arch.lifecycle.ViewModelProviders
 import android.view.LayoutInflater
 import crocodile8008.currencies.MainActivity
-import crocodile8008.currencies.presentation.view.CurrenciesViewModel
+import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
 import dagger.Module
 import dagger.Provides
 

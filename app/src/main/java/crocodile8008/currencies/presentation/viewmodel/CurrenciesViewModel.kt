@@ -1,4 +1,4 @@
-package crocodile8008.currencies.presentation.view
+package crocodile8008.currencies.presentation.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import crocodile8008.currencies.data.model.CurrenciesBundle
