@@ -16,7 +16,7 @@ import javax.inject.Inject
 /**
  * Created by Andrei Riik in 2018.
  */
-class CurrenciesPresenter @Inject constructor(
+class CurrenciesListPresenter @Inject constructor(
     private val repo: CurrenciesRepo,
     private val viewModel : CurrenciesViewModel) {
 

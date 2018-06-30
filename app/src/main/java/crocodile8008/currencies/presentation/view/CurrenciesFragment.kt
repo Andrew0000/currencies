@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.App
 import crocodile8008.currencies.R
-import crocodile8008.currencies.presentation.presenter.CurrenciesPresenter
+import crocodile8008.currencies.presentation.presenter.CurrenciesListPresenter
 import kotlinx.android.synthetic.main.currencies_fragment.*
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 class CurrenciesFragment : Fragment(), CurrenciesView {
 
-    @Inject lateinit var presenter : CurrenciesPresenter
+    @Inject lateinit var presenter : CurrenciesListPresenter
     @Inject lateinit var adapter : CurrenciesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
