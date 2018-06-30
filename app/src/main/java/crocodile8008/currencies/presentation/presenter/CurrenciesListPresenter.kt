@@ -1,10 +1,12 @@
 package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
+import crocodile8008.currencies.MainActivity
 import crocodile8008.currencies.data.CurrenciesRepo
 import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
+import crocodile8008.currencies.utils.Utils
 import crocodile8008.currencies.utils.hasNoPosition
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
 import io.reactivex.Observable
@@ -18,7 +20,8 @@ import javax.inject.Inject
  */
 class CurrenciesListPresenter @Inject constructor(
     private val repo: CurrenciesRepo,
-    private val viewModel : CurrenciesViewModel) {
+    private val viewModel : CurrenciesViewModel,
+    private val activity : MainActivity) {
 
     private lateinit var view : CurrenciesView
 
@@ -88,6 +91,10 @@ class CurrenciesListPresenter @Inject constructor(
         }
         Lo.i("onTypedChanges: $holder, $item")
         viewModel.typedCount = item.rate
+    }
+
+    fun onScrolled() {
+        Utils.hideKeyboard(activity)
     }
 
     private fun reorderAndDisplay(list : List<String>) {

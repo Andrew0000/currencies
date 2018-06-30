@@ -95,9 +95,7 @@ class CurrenciesAdapter @Inject constructor(
         }
 
         override fun showKeyboard() {
-            money.post {
-                money.showKeyboard()
-            }
+            money.showKeyboard()
         }
 
         fun getDisplayData() = CountryRate.parse(country.text.toString(), money.text.toString())

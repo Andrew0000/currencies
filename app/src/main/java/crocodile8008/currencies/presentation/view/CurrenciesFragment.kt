@@ -3,6 +3,7 @@ package crocodile8008.currencies.presentation.view
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,13 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { presenter.onTextFocus(it) }
         adapter.observeTypedMoney().subscribe { presenter.onTypedChanges(it) }
+        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy != 0) {
+                    presenter.onScrolled()
+                }
+            }
+        })
         presenter.onViewCreated(this)
     }
 
