@@ -36,6 +36,10 @@ class CurrencyItemPresenter<T> @Inject constructor(
         }
     }
 
+    fun onViewRecycled(holder: T) {
+        holders.remove(holder)
+    }
+
     private fun updateCurrencyOnBaseItem(holder: T) {
         if (viewModel.displayCountWhenWasBeforeMainPosition != CurrenciesViewModel.NOTHING) {
             holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())

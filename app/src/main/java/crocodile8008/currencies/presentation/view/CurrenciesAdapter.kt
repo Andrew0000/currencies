@@ -55,6 +55,11 @@ class CurrenciesAdapter @Inject constructor(
         currencyPresenter.onBindViewHolder(holder, values[position])
     }
 
+    override fun onViewRecycled(holder: CurrencyViewHolder) {
+        super.onViewRecycled(holder)
+        currencyPresenter.onViewRecycled(holder)
+    }
+
     fun onDestroyView() {
         currencyPresenter.onDestroyView()
     }
