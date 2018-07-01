@@ -84,9 +84,7 @@ class CurrenciesAdapter @Inject constructor(
             }
             money.addTextChangedListener(object : EmptyTextWatcher() {
                 override fun afterTextChanged(s: Editable?) {
-                    if (s != null) {
-                        typedSubject.onNext(this@CurrencyViewHolder)
-                    }
+                    typedSubject.onNext(this@CurrencyViewHolder)
                 }
             })
         }
