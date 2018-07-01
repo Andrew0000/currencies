@@ -9,6 +9,8 @@ import io.reactivex.disposables.CompositeDisposable
 
 /**
  * Created by Andrei Riik in 2018.
+ *
+ * See Test
  */
 
 fun <T> Observable<T>.subscribeAndAddToDisposable(onNext: (T) -> Unit,
@@ -26,3 +28,13 @@ fun EditText.showKeyboard() {
 }
 
 fun RecyclerView.ViewHolder.hasNoPosition() = this.adapterPosition == RecyclerView.NO_POSITION
+
+fun Float.format2Digits() = "%.2f".format(this)
+
+fun String.toFloatOrZero() : Float {
+    return try {
+        this.replace(",", ".").toFloat()
+    } catch (e : NumberFormatException) {
+        0f
+    }
+}
