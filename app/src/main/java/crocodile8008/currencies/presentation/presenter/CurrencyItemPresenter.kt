@@ -8,7 +8,7 @@ import crocodile8008.currencies.presentation.view.ItemView
 import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
 import crocodile8008.currencies.utils.Exchanger
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 import javax.inject.Inject
 
@@ -22,11 +22,11 @@ class CurrencyItemPresenter<T> @Inject constructor(
 
     private val holders = WeakHashMap<T, String>()
 
-    private var disposable : Disposable? = null
+    private var disposable : CompositeDisposable? = null
 
     @MainThread
     fun onBindViewHolder(holder: T, country: String) {
-        observeRepoIfNot()
+        observeDataIfNot()
         holders[holder] = country
         holder.setCountry(country)
         if (viewModel.isSelectedCountry(country)) {
@@ -45,32 +45,51 @@ class CurrencyItemPresenter<T> @Inject constructor(
             holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
             viewModel.displayCountWhenWasBeforeMainPosition = CurrenciesViewModel.NOTHING
         } else {
-            holder.setMoney(viewModel.typedCount.toString())
+            holder.setMoney(viewModel.getTypedCount().toString())
         }
     }
 
-    private fun observeRepoIfNot() {
+    @MainThread
+    private fun observeDataIfNot() {
         if (disposable != null) {
             return
         }
-        disposable = repo.observeAllUpdates()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        {
-                            viewModel.lastDisplayedFull = it
-                            holders.forEach { (holder, country) ->
-                                if (!viewModel.isSelectedCountry(country)) {
-                                    updateCurrencyOnItem(holder, country)
-                                }
-                            }
-                        },
-                        { Lo.e("", it) }
-                )
+        val tmp = CompositeDisposable()
+        tmp.add(observeRepo())
+        tmp.add(observeTypedCount())
+        disposable = tmp
+    }
+
+    private fun observeRepo() =
+            repo.observeAllUpdates()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext { viewModel.lastDisplayedFull = it }
+                    .subscribe(
+                            { updateAllSecondaryCurrencies() },
+                            { Lo.e("", it) }
+                    )
+
+    private fun observeTypedCount() =
+            viewModel.observeTypedCount()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { updateAllSecondaryCurrencies() },
+                            { Lo.e("", it) }
+                    )
+
+    @MainThread
+    private fun updateAllSecondaryCurrencies() {
+        holders.forEach { (holder, country) ->
+            if (!viewModel.isSelectedCountry(country)) {
+                updateCurrencyOnItem(holder, country)
+            }
+        }
+        Lo.v("updateAllSecondaryCurrencies, all holders: ${holders.size}")
     }
 
     private fun updateCurrencyOnItem(holder: T, country: String) {
         val exchanged = exchanger.exchange(
-                viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.typedCount, country)
+                viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.getTypedCount(), country)
         holder.setMoney(exchanged.toString())
     }
 

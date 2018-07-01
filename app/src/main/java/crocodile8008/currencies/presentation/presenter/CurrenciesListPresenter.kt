@@ -94,7 +94,7 @@ class CurrenciesListPresenter @Inject constructor(
             return
         }
         Lo.i("onTypedChanges: $holder, $item")
-        viewModel.typedCount = item.rate
+        viewModel.setTypedCount(item.rate)
     }
 
     fun onScrolled() {
