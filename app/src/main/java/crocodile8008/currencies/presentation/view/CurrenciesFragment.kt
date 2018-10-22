@@ -11,6 +11,7 @@ import crocodile8008.common.log.Lo
 import crocodile8008.currencies.App
 import crocodile8008.currencies.R
 import crocodile8008.currencies.presentation.presenter.CurrenciesListPresenter
+import crocodile8008.currencies.utils.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.currencies_fragment.*
 import java.util.concurrent.TimeUnit
@@ -79,6 +80,12 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
 
     override fun scrollToTop() {
         recycler.scrollToPosition(0)
+    }
+
+    override fun hideKeyboard() {
+        activity?.apply {
+            Utils.hideKeyboard(this)
+        }
     }
 
     override fun onPause() {

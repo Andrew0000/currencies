@@ -6,14 +6,12 @@ import android.view.inputmethod.InputMethodManager
 /**
  * Created by Andrei Riik in 2018.
  */
-class Utils {
-    companion object {
+object Utils {
 
-        fun hideKeyboard(activity: Activity) {
-            if (activity.currentFocus != null) {
-                val input = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                input.hideSoftInputFromWindow(activity.currentFocus!!.windowToken, 0)
-            }
+    fun hideKeyboard(activity: Activity) {
+        if (activity.currentFocus != null) {
+            val input = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            input.hideSoftInputFromWindow(activity.currentFocus!!.windowToken, 0)
         }
     }
 }

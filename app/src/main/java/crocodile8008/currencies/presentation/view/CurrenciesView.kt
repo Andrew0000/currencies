@@ -12,4 +12,6 @@ interface CurrenciesView {
     fun showData(data : List<String>)
 
     fun scrollToTop()
+
+    fun hideKeyboard()
 }
