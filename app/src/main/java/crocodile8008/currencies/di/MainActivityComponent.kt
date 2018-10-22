@@ -6,7 +6,7 @@ import dagger.Subcomponent
 /**
  * Created by Andrei Riik in 2018.
  */
-@MainActivityScope
+@ActivityScope
 @Subcomponent(modules = [(MainActivityModule::class)])
 interface MainActivityComponent {
 

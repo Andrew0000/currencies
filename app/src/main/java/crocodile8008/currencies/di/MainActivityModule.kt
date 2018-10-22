@@ -11,15 +11,15 @@ import dagger.Provides
  * Created by Andrei Riik in 2018.
  */
 @Module
-@MainActivityScope
+@ActivityScope
 class MainActivityModule(private val activity : MainActivity) {
 
     @Provides
-    @MainActivityScope
+    @ActivityScope
     fun provideActivity() : MainActivity = activity
 
     @Provides
-    @MainActivityScope
+    @ActivityScope
     fun provideLayoutInflater() : LayoutInflater = activity.layoutInflater
 
     @Provides
