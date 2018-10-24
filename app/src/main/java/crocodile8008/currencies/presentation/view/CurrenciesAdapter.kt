@@ -24,7 +24,7 @@ import javax.inject.Inject
  */
 class CurrenciesAdapter @Inject constructor(
     private val inflater : LayoutInflater,
-    private val currencyPresenter: CurrencyItemPresenter<CurrenciesAdapter.CurrencyViewHolder>
+    private val presenter: CurrencyItemPresenter<CurrenciesAdapter.CurrencyViewHolder>
 ) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
     private val values = ArrayList<String>()
@@ -52,16 +52,16 @@ class CurrenciesAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        currencyPresenter.onBindViewHolder(holder, values[position])
+        presenter.onBindViewHolder(holder, values[position])
     }
 
     override fun onViewRecycled(holder: CurrencyViewHolder) {
         super.onViewRecycled(holder)
-        currencyPresenter.onViewRecycled(holder)
+        presenter.onViewRecycled(holder)
     }
 
     fun onDestroyView() {
-        currencyPresenter.onDestroyView()
+        presenter.onDestroyView()
     }
 
     override fun getItemCount() = values.size
