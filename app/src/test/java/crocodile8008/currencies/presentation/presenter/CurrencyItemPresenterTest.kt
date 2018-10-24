@@ -1,6 +1,7 @@
 package crocodile8008.currencies.presentation.presenter
 
 import com.nhaarman.mockitokotlin2.*
+import crocodile8008.currencies.MockData.createShortBundle
 import crocodile8008.currencies.data.CurrenciesRepo
 import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.presentation.view.CurrenciesAdapter
@@ -27,7 +28,7 @@ class CurrencyItemPresenterTest {
     private lateinit var exchanger: Exchanger
     private val viewModel  = CurrenciesViewModel()
 
-    private val repoSubject = BehaviorSubject.createDefault<CurrenciesBundle>(createBundle())
+    private val repoSubject = BehaviorSubject.createDefault<CurrenciesBundle>(createShortBundle())
 
     private lateinit var presenter: CurrencyItemPresenter
 
@@ -97,20 +98,10 @@ class CurrencyItemPresenterTest {
         verify(exchanger, times(2)).exchange(any(), any(), any(), any())
         reset(itemViewSelected, itemView2, itemView3, exchanger)
 
-        repoSubject.onNext(createBundle())
+        repoSubject.onNext(createShortBundle())
         verify(itemViewSelected, never()).setMoney(any())
         verify(itemView2).setMoney(any())
         verify(itemView3).setMoney(any())
         verify(exchanger, times(2)).exchange(any(), any(), any(), any())
     }
-
-    private fun createBundle() = CurrenciesBundle(
-            "EUR",
-            "12345",
-            mapOf(
-                    Pair("AUD", 1.5f),
-                    Pair("BGN", 2f),
-                    Pair("BRL", 1.1f)
-            )
-    )
 }

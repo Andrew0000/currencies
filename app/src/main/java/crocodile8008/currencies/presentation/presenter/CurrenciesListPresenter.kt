@@ -27,7 +27,6 @@ class CurrenciesListPresenter @Inject constructor(
         this.view = view
         Lo.i("onViewCreated: $view")
         repo.observeAllUpdates()
-                .subscribeOn(Schedulers.io())
                 .map{ bundleToList(it) }
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
