@@ -14,7 +14,7 @@ class CurrenciesViewModel : ViewModel() {
     }
 
     var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
-    var displayCountWhenWasBeforeMainPosition = NOTHING
+    var displayedMoneyBeforeSelectedPosition = NOTHING
     var lastDisplayedList : List<String> = ArrayList()
     var lastDisplayedFull : CurrenciesBundle = CurrenciesBundle.EMPTY
     private val typedCount = BehaviorSubject.createDefault(100f)

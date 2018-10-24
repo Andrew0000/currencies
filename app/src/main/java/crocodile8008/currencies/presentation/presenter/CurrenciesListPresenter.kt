@@ -63,7 +63,7 @@ class CurrenciesListPresenter @Inject constructor(
     fun onClickItem(itemView : ItemView) {
         val data = itemView.getDisplayData()
         Lo.i("onClickItem: $itemView, $data")
-        viewModel.displayCountWhenWasBeforeMainPosition = data.rate
+        viewModel.displayedMoneyBeforeSelectedPosition = data.rate
         viewModel.selectedCountry = data.name
         reorderAndDisplay(viewModel.lastDisplayedList)
         view.scrollToTop()

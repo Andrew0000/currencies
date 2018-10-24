@@ -40,9 +40,9 @@ class CurrencyItemPresenter @Inject constructor(
     }
 
     private fun updateCurrencyOnBaseItem(itemView: ItemView) {
-        if (viewModel.displayCountWhenWasBeforeMainPosition != CurrenciesViewModel.NOTHING) {
-            itemView.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
-            viewModel.displayCountWhenWasBeforeMainPosition = CurrenciesViewModel.NOTHING
+        if (viewModel.displayedMoneyBeforeSelectedPosition != CurrenciesViewModel.NOTHING) {
+            itemView.setMoney(viewModel.displayedMoneyBeforeSelectedPosition.toString())
+            viewModel.displayedMoneyBeforeSelectedPosition = CurrenciesViewModel.NOTHING
         } else {
             itemView.setMoney(viewModel.getTypedCount().toString())
         }
