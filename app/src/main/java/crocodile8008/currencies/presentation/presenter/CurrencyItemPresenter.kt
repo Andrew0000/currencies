@@ -29,9 +29,9 @@ class CurrencyItemPresenter @Inject constructor(
         views[itemView] = country
         itemView.setCountry(country)
         if (viewModel.isSelectedCountry(country)) {
-            updateCurrencyOnBaseItem(itemView)
-        } else if (!viewModel.lastDisplayedFull.isEmpty()) {
-            updateCurrencyOnItem(itemView, country)
+            updateCurrencyOnSelectedItem(itemView)
+        } else {
+            updateCurrencyOnNonSelectedItem(itemView, country)
         }
     }
 
@@ -39,13 +39,8 @@ class CurrencyItemPresenter @Inject constructor(
         views.remove(itemView)
     }
 
-    private fun updateCurrencyOnBaseItem(itemView: ItemView) {
-        if (viewModel.displayedMoneyBeforeSelectedPosition != CurrenciesViewModel.NOTHING) {
-            itemView.setMoney(viewModel.displayedMoneyBeforeSelectedPosition.toString())
-            viewModel.displayedMoneyBeforeSelectedPosition = CurrenciesViewModel.NOTHING
-        } else {
-            itemView.setMoney(viewModel.getTypedCount().toString())
-        }
+    private fun updateCurrencyOnSelectedItem(itemView: ItemView) {
+        itemView.setMoney(viewModel.getTypedCount().toString())
     }
 
     @MainThread
@@ -80,13 +75,16 @@ class CurrencyItemPresenter @Inject constructor(
     private fun updateAllSecondaryCurrencies() {
         views.forEach { (itemView, country) ->
             if (!viewModel.isSelectedCountry(country)) {
-                updateCurrencyOnItem(itemView, country)
+                updateCurrencyOnNonSelectedItem(itemView, country)
             }
         }
         Lo.v("updateAllSecondaryCurrencies, all views: ${views.size}")
     }
 
-    private fun updateCurrencyOnItem(itemView: ItemView, country: String) {
+    private fun updateCurrencyOnNonSelectedItem(itemView: ItemView, country: String) {
+        if (viewModel.lastDisplayedFull.isEmpty()) {
+            return
+        }
         val exchanged = exchanger.exchange(
                 viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.getTypedCount(), country)
         itemView.setMoney(exchanged.toString())
