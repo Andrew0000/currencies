@@ -2,10 +2,9 @@ package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
-import crocodile8008.currencies.presentation.view.CurrenciesAdapter
 import crocodile8008.currencies.presentation.view.CurrenciesView
+import crocodile8008.currencies.presentation.view.ItemView
 import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
-import crocodile8008.currencies.utils.hasNoPosition
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -61,37 +60,36 @@ class CurrenciesListPresenter @Inject constructor(
         view.hideProgress()
     }
 
-    fun onClickItem(holder : CurrenciesAdapter.CurrencyViewHolder) {
-        val data = holder.getDisplayData()
-        Lo.i("onClickItem: $holder, $data")
+    fun onClickItem(itemView : ItemView) {
+        val data = itemView.getDisplayData()
+        Lo.i("onClickItem: $itemView, $data")
         viewModel.displayCountWhenWasBeforeMainPosition = data.rate
         viewModel.selectedCountry = data.name
         reorderAndDisplay(viewModel.lastDisplayedList)
         view.scrollToTop()
-        holder.showKeyboard()
+        itemView.showKeyboard()
     }
 
-    fun isValidSecondaryPosition(holder : CurrenciesAdapter.CurrencyViewHolder) : Boolean {
-        val item = holder.getDisplayData()
-        if (holder.hasNoPosition() || item.name.isEmpty() || viewModel.isSelectedCountry(item.name)) {
-            return false
-        }
-        return true
-    }
-
-    fun onTextFocus(holder : CurrenciesAdapter.CurrencyViewHolder) {
-        val item = holder.getDisplayData()
-        Lo.d("onTextFocus: $holder, $item")
-        onClickItem(holder)
-    }
-
-    fun onTypedChanges(holder : CurrenciesAdapter.CurrencyViewHolder) {
-        val item = holder.getDisplayData()
-        if (holder.hasNoPosition() || item.name.isEmpty() || !viewModel.isSelectedCountry(item.name)) {
+    fun onTextFocus(itemView : ItemView) {
+        val data = itemView.getDisplayData()
+        if (!itemView.hasPosition() || data.name.isEmpty()) {
             return
         }
-        Lo.i("onTypedChanges: $holder, $item")
-        viewModel.setTypedCount(item.rate)
+        if (!viewModel.isSelectedCountry(data.name)) {
+            Lo.d("onTextFocus: $itemView, $data")
+            onClickItem(itemView)
+        }
+    }
+
+    fun onTypedChanges(itemView : ItemView) {
+        val data = itemView.getDisplayData()
+        if (!itemView.hasPosition() || data.name.isEmpty()) {
+            return
+        }
+        if (viewModel.isSelectedCountry(data.name)) {
+            Lo.i("onTypedChanges: $itemView, $data")
+            viewModel.setTypedCount(data.rate)
+        }
     }
 
     fun onScrolled() {

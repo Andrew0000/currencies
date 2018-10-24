@@ -28,15 +28,15 @@ class CurrenciesAdapter @Inject constructor(
 ) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
 
     private val values = ArrayList<String>()
-    private val clickSubject = PublishSubject.create<CurrencyViewHolder>()
-    private val focusSubject = PublishSubject.create<CurrencyViewHolder>()
-    private val typedSubject = PublishSubject.create<CurrencyViewHolder>()
+    private val clickSubject = PublishSubject.create<ItemView>()
+    private val focusSubject = PublishSubject.create<ItemView>()
+    private val typedSubject = PublishSubject.create<ItemView>()
 
-    fun observeClicks() : Observable<CurrencyViewHolder> = clickSubject
+    fun observeClicks() : Observable<ItemView> = clickSubject
 
-    fun observeTextFocus() : Observable<CurrencyViewHolder> = focusSubject
+    fun observeTextFocus() : Observable<ItemView> = focusSubject
 
-    fun observeTypedMoney() : Observable<CurrencyViewHolder> = typedSubject
+    fun observeTypedMoney() : Observable<ItemView> = typedSubject
 
     @MainThread
     fun update(newValues : List<String>) {
@@ -101,6 +101,8 @@ class CurrenciesAdapter @Inject constructor(
             money.showKeyboard()
         }
 
-        fun getDisplayData() = CountryRate.parse(country.text.toString(), money.text.toString())
+        override fun getDisplayData() = CountryRate.parse(country.text.toString(), money.text.toString())
+
+        override fun hasPosition() = this.adapterPosition != RecyclerView.NO_POSITION
     }
 }

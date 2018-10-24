@@ -45,11 +45,11 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { presenter.onClickItem(it) }
         adapter.observeTextFocus()
-                .filter { presenter.isValidSecondaryPosition(it) }
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { presenter.onTextFocus(it) }
-        adapter.observeTypedMoney().subscribe { presenter.onTypedChanges(it) }
+        adapter.observeTypedMoney()
+                .subscribe { presenter.onTypedChanges(it) }
         recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) {

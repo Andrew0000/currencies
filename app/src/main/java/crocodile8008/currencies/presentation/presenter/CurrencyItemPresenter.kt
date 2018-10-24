@@ -54,10 +54,10 @@ class CurrencyItemPresenter<T> @Inject constructor(
         if (disposable != null) {
             return
         }
-        val tmp = CompositeDisposable()
-        tmp.add(observeRepo())
-        tmp.add(observeTypedCount())
-        disposable = tmp
+        disposable = CompositeDisposable().apply {
+            add(observeRepo())
+            add(observeTypedCount())
+        }
     }
 
     private fun observeRepo() =

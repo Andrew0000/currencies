@@ -1,7 +1,6 @@
 package crocodile8008.currencies.utils
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import io.reactivex.Observable
@@ -26,8 +25,6 @@ fun EditText.showKeyboard() {
     val keyboard = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     keyboard.showSoftInput(this, 0)
 }
-
-fun RecyclerView.ViewHolder.hasNoPosition() = this.adapterPosition == RecyclerView.NO_POSITION
 
 fun Float.format2Digits() = "%.2f".format(this)
 
