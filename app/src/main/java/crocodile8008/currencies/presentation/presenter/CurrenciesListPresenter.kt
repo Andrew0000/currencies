@@ -2,11 +2,11 @@ package crocodile8008.currencies.presentation.presenter
 
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
+import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.view.ItemView
 import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
 import crocodile8008.currencies.utils.subscribeAndAddToDisposable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -28,14 +28,7 @@ class CurrenciesListPresenter @Inject constructor(
         Lo.i("onViewCreated: $view")
         repo.observeAllUpdates()
                 .subscribeOn(Schedulers.io())
-                .flatMap{ Observable.just(
-                                if (it.isEmpty()) {
-                                    ArrayList()
-                                } else {
-                                    ArrayList(it.rates.map { it.key }).apply { add(0, it.base) }
-                                }
-                )
-                }
+                .map{ bundleToList(it) }
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showProgress() }
@@ -45,6 +38,13 @@ class CurrenciesListPresenter @Inject constructor(
                         disposable
                 )
     }
+
+    private fun bundleToList(bundle: CurrenciesBundle): List<String> =
+        if (bundle.isEmpty()) {
+            ArrayList()
+        } else {
+            ArrayList(bundle.rates.map { it.key }).apply { add(0, bundle.base) }
+        }
 
     fun onResume() {
         Lo.i("onResume")
