@@ -1,7 +1,6 @@
 package crocodile8008.currencies.presentation.presenter
 
 import android.support.annotation.MainThread
-import android.support.v7.widget.RecyclerView
 import crocodile8008.common.log.Lo
 import crocodile8008.currencies.data.CurrenciesRepo
 import crocodile8008.currencies.presentation.view.ItemView
@@ -15,37 +14,37 @@ import javax.inject.Inject
 /**
  * Created by Andrei Riik in 2018.
  */
-class CurrencyItemPresenter<T> @Inject constructor(
+class CurrencyItemPresenter @Inject constructor(
     private val repo: CurrenciesRepo,
     private val exchanger: Exchanger,
-    private val viewModel : CurrenciesViewModel) where T : RecyclerView.ViewHolder, T : ItemView {
+    private val viewModel : CurrenciesViewModel) {
 
-    private val holders = WeakHashMap<T, String>()
+    private val views = WeakHashMap<ItemView, String>()
 
     private var disposable : CompositeDisposable? = null
 
     @MainThread
-    fun onBindViewHolder(holder: T, country: String) {
+    fun onBindView(itemView: ItemView, country: String) {
         observeDataIfNot()
-        holders[holder] = country
-        holder.setCountry(country)
+        views[itemView] = country
+        itemView.setCountry(country)
         if (viewModel.isSelectedCountry(country)) {
-            updateCurrencyOnBaseItem(holder)
+            updateCurrencyOnBaseItem(itemView)
         } else if (!viewModel.lastDisplayedFull.isEmpty()) {
-            updateCurrencyOnItem(holder, country)
+            updateCurrencyOnItem(itemView, country)
         }
     }
 
-    fun onViewRecycled(holder: T) {
-        holders.remove(holder)
+    fun onViewRecycled(itemView: ItemView) {
+        views.remove(itemView)
     }
 
-    private fun updateCurrencyOnBaseItem(holder: T) {
+    private fun updateCurrencyOnBaseItem(itemView: ItemView) {
         if (viewModel.displayCountWhenWasBeforeMainPosition != CurrenciesViewModel.NOTHING) {
-            holder.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
+            itemView.setMoney(viewModel.displayCountWhenWasBeforeMainPosition.toString())
             viewModel.displayCountWhenWasBeforeMainPosition = CurrenciesViewModel.NOTHING
         } else {
-            holder.setMoney(viewModel.getTypedCount().toString())
+            itemView.setMoney(viewModel.getTypedCount().toString())
         }
     }
 
@@ -79,23 +78,23 @@ class CurrencyItemPresenter<T> @Inject constructor(
 
     @MainThread
     private fun updateAllSecondaryCurrencies() {
-        holders.forEach { (holder, country) ->
+        views.forEach { (itemView, country) ->
             if (!viewModel.isSelectedCountry(country)) {
-                updateCurrencyOnItem(holder, country)
+                updateCurrencyOnItem(itemView, country)
             }
         }
-        Lo.v("updateAllSecondaryCurrencies, all holders: ${holders.size}")
+        Lo.v("updateAllSecondaryCurrencies, all views: ${views.size}")
     }
 
-    private fun updateCurrencyOnItem(holder: T, country: String) {
+    private fun updateCurrencyOnItem(itemView: ItemView, country: String) {
         val exchanged = exchanger.exchange(
                 viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.getTypedCount(), country)
-        holder.setMoney(exchanged.toString())
+        itemView.setMoney(exchanged.toString())
     }
 
     @MainThread
     fun onDestroyView() {
-        holders.clear()
+        views.clear()
         disposable?.dispose()
     }
 }
