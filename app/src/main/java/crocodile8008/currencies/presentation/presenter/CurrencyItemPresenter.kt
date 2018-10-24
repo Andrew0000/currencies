@@ -57,7 +57,7 @@ class CurrencyItemPresenter @Inject constructor(
     private fun observeRepo() =
             repo.observeAllUpdates()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext { viewModel.lastDisplayedFull = it }
+                    .doOnNext { viewModel.lastDisplayedBundle = it }
                     .subscribe(
                             { updateAllSecondaryCurrencies() },
                             { Lo.e("", it) }
@@ -82,11 +82,11 @@ class CurrencyItemPresenter @Inject constructor(
     }
 
     private fun updateCurrencyOnNonSelectedItem(itemView: ItemView, country: String) {
-        if (viewModel.lastDisplayedFull.isEmpty()) {
+        if (viewModel.lastDisplayedBundle.isEmpty()) {
             return
         }
         val exchanged = exchanger.exchange(
-                viewModel.lastDisplayedFull, viewModel.selectedCountry, viewModel.getTypedCount(), country)
+                viewModel.lastDisplayedBundle, viewModel.selectedCountry, viewModel.getTypedCount(), country)
         itemView.setMoney(exchanged.toString())
     }
 

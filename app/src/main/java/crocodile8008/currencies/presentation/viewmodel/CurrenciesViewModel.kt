@@ -12,7 +12,7 @@ class CurrenciesViewModel : ViewModel() {
 
     var selectedCountry = CurrenciesBundle.DEFAULT_COUNTRY
     var lastDisplayedList : List<String> = ArrayList()
-    var lastDisplayedFull : CurrenciesBundle = CurrenciesBundle.EMPTY
+    var lastDisplayedBundle : CurrenciesBundle = CurrenciesBundle.EMPTY
     private val typedCount = BehaviorSubject.createDefault(100f)
 
     fun observeTypedCount() : Observable<Float> = typedCount
