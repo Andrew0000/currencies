@@ -12,11 +12,9 @@ import io.reactivex.disposables.CompositeDisposable
  * See Test
  */
 
-fun <T> Observable<T>.subscribeAndAddToDisposable(onNext: (T) -> Unit,
-                                                  onError: (Throwable) -> Unit,
-                                                  disposable: CompositeDisposable) {
+fun <T> Observable<T>.subscribeDisposable(onNext: (T) -> Unit, disposable: CompositeDisposable) {
     disposable.add(
-            subscribe(onNext, onError)
+            subscribe(onNext, { } )
     )
 }
 

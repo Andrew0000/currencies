@@ -50,6 +50,11 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
                 .subscribe { presenter.onTextFocus(it) }
         adapter.observeTypedMoney()
                 .subscribe { presenter.onTypedChanges(it) }
+        adapter.bindDelegate = object : ViewHolderDelegate<CurrenciesAdapter.CurrencyViewHolder, String> {
+            override fun onBindViewHolder(first: CurrenciesAdapter.CurrencyViewHolder, second: String) {
+                presenter.onBindItem(first, second)
+            }
+        }
         recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) {
@@ -88,6 +93,8 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
         }
     }
 
+    override fun getAttachedItems(): Set<ItemView> = adapter.getAttachedItems()
+
     override fun onPause() {
         super.onPause()
         presenter.onPause()
@@ -95,7 +102,6 @@ class CurrenciesFragment : Fragment(), CurrenciesView {
 
     override fun onDestroyView() {
         presenter.onDestroyView()
-        adapter.onDestroyView()
         super.onDestroyView()
     }
 

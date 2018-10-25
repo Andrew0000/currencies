@@ -11,26 +11,31 @@ import android.widget.EditText
 import android.widget.TextView
 import crocodile8008.currencies.R
 import crocodile8008.currencies.data.model.CountryRate
-import crocodile8008.currencies.presentation.presenter.CurrencyItemPresenter
 import crocodile8008.currencies.utils.EmptyTextWatcher
 import crocodile8008.currencies.utils.showKeyboard
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.currency_item.view.*
+import java.util.*
 import javax.inject.Inject
 
 /**
  * Created by Andrei Riik in 2018.
  */
 class CurrenciesAdapter @Inject constructor(
-    private val inflater : LayoutInflater,
-    private val presenter: CurrencyItemPresenter
+    private val inflater : LayoutInflater
 ) : RecyclerView.Adapter<CurrenciesAdapter.CurrencyViewHolder>() {
+
+    var bindDelegate: ViewHolderDelegate<CurrencyViewHolder, String>? = null
+
+    private val views = Collections.newSetFromMap(WeakHashMap<ItemView, Boolean>())
 
     private val values = ArrayList<String>()
     private val clickSubject = PublishSubject.create<ItemView>()
     private val focusSubject = PublishSubject.create<ItemView>()
     private val typedSubject = PublishSubject.create<ItemView>()
+
+    fun getAttachedItems(): Set<ItemView> = views
 
     fun observeClicks() : Observable<ItemView> = clickSubject
 
@@ -52,16 +57,13 @@ class CurrenciesAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        presenter.onBindView(holder, values[position])
+        views.add(holder)
+        bindDelegate?.onBindViewHolder(holder, values[position])
     }
 
     override fun onViewRecycled(holder: CurrencyViewHolder) {
         super.onViewRecycled(holder)
-        presenter.onViewRecycled(holder)
-    }
-
-    fun onDestroyView() {
-        presenter.onDestroyView()
+        views.remove(holder)
     }
 
     override fun getItemCount() = values.size

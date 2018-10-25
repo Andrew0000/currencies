@@ -14,4 +14,6 @@ interface CurrenciesView {
     fun scrollToTop()
 
     fun hideKeyboard()
+
+    fun getAttachedItems(): Set<ItemView>
 }

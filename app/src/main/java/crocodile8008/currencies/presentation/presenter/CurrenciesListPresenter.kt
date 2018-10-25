@@ -6,10 +6,10 @@ import crocodile8008.currencies.data.model.CurrenciesBundle
 import crocodile8008.currencies.presentation.view.CurrenciesView
 import crocodile8008.currencies.presentation.view.ItemView
 import crocodile8008.currencies.presentation.viewmodel.CurrenciesViewModel
-import crocodile8008.currencies.utils.subscribeAndAddToDisposable
+import crocodile8008.currencies.utils.Exchanger
+import crocodile8008.currencies.utils.subscribeDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -17,6 +17,7 @@ import javax.inject.Inject
  */
 class CurrenciesListPresenter @Inject constructor(
     private val repo: CurrenciesRepo,
+    private val exchanger: Exchanger,
     private val viewModel : CurrenciesViewModel) {
 
     private lateinit var view : CurrenciesView
@@ -25,15 +26,17 @@ class CurrenciesListPresenter @Inject constructor(
 
     fun onViewCreated(view : CurrenciesView) {
         this.view = view
-        Lo.i("onViewCreated: $view")
         repo.observeAllUpdates()
-                .map{ bundleToList(it) }
-                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showProgress() }
-                .subscribeAndAddToDisposable(
-                        { updateDisplayDataOnSuccess(it) },
-                        { Lo.e("error", it) },
+                .doOnNext {
+                    viewModel.lastReceivedBundle = it
+                    updateSecondaryCurrencies()
+                }
+                .map{ bundleToList(it) }
+                .distinctUntilChanged()
+                .subscribeDisposable(
+                        { updateWholeList(it) },
                         disposable
                 )
     }
@@ -45,12 +48,35 @@ class CurrenciesListPresenter @Inject constructor(
             ArrayList(bundle.rates.map { it.key }).apply { add(0, bundle.base) }
         }
 
-    fun onResume() {
-        Lo.i("onResume")
-        repo.startUpdates()
+    fun onBindItem(itemView: ItemView, country: String) {
+        itemView.setCountry(country)
+        if (viewModel.isSelectedCountry(country)) {
+            itemView.setMoney(viewModel.typedCount.toString())
+        } else {
+            updateCurrencyOnNonSelectedItem(itemView, country)
+        }
     }
 
-    private fun updateDisplayDataOnSuccess(data: List<String>) {
+    private fun updateCurrencyOnNonSelectedItem(itemView: ItemView, country: String) {
+        if (viewModel.lastReceivedBundle.isEmpty()) {
+            return
+        }
+        val exchanged = exchanger.exchange(
+                viewModel.lastReceivedBundle, viewModel.selectedCountry, viewModel.typedCount, country)
+        itemView.setMoney(exchanged.toString())
+    }
+
+    private fun updateSecondaryCurrencies() {
+        view.getAttachedItems().forEach { itemView ->
+            val country = itemView.getDisplayData().name
+            if (!viewModel.isSelectedCountry(country)) {
+                updateCurrencyOnNonSelectedItem(itemView, country)
+            }
+        }
+        Lo.v("updateAllSecondaryCurrencies, all views: ${view.getAttachedItems().size}")
+    }
+
+    private fun updateWholeList(data: List<String>) {
         if (data.isEmpty()) {
             view.showProgress()
             return
@@ -61,8 +87,7 @@ class CurrenciesListPresenter @Inject constructor(
 
     fun onClickItem(itemView : ItemView) {
         val data = itemView.getDisplayData()
-        Lo.i("onClickItem: $itemView, $data")
-        viewModel.setTypedCount(data.rate)
+        viewModel.typedCount = data.rate
         viewModel.selectedCountry = data.name
         reorderAndDisplay(viewModel.lastDisplayedList)
         view.scrollToTop()
@@ -75,7 +100,6 @@ class CurrenciesListPresenter @Inject constructor(
             return
         }
         if (!viewModel.isSelectedCountry(data.name)) {
-            Lo.d("onTextFocus: $itemView, $data")
             onClickItem(itemView)
         }
     }
@@ -86,13 +110,9 @@ class CurrenciesListPresenter @Inject constructor(
             return
         }
         if (viewModel.isSelectedCountry(data.name)) {
-            Lo.i("onTypedChanges: $itemView, $data")
-            viewModel.setTypedCount(data.rate)
+            viewModel.typedCount = data.rate
+            updateSecondaryCurrencies()
         }
-    }
-
-    fun onScrolled() {
-        view.hideKeyboard()
     }
 
     private fun reorderAndDisplay(list : List<String>) {
@@ -112,13 +132,11 @@ class CurrenciesListPresenter @Inject constructor(
         return result
     }
 
-    fun onPause() {
-        Lo.i("onPause")
-        repo.stopUpdates()
-    }
+    fun onScrolled() = view.hideKeyboard()
 
-    fun onDestroyView() {
-        Lo.i("onDestroyView: $view")
-        disposable.clear()
-    }
+    fun onResume() = repo.startUpdates()
+
+    fun onPause() = repo.stopUpdates()
+
+    fun onDestroyView() = disposable.clear()
 }
